@@ -89,6 +89,7 @@ builder.Services.AddScoped<BookEventService>(provider =>
     return new BookEventService(supabaseClient);
 });
 
+
 builder.Services.AddScoped<BookEventHistoryController>(provider =>
 {
     var eventService = provider.GetService<BookEventService>();
@@ -106,6 +107,8 @@ builder.Services.AddScoped<BookEventHistoryController>(provider =>
 builder.Services.AddScoped<AddBookService>();
 builder.Services.AddScoped<EditBookService>();
 builder.Services.AddScoped<DeleteBookService>();
+builder.Services.AddScoped<ReturnedSavedBookService>();
+
 
 var app = builder.Build();
 
