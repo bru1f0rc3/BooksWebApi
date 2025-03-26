@@ -1,4 +1,5 @@
 ﻿using BooksApi.Models.Dashboard;
+using Supabase;
 
 namespace BooksApi.Service.DashboardService
 {
@@ -18,17 +19,19 @@ namespace BooksApi.Service.DashboardService
                 var query = await _supabaseClient
                     .From<Account>()
                     .Select("*")
-                    .Match(new Dictionary<string, string>
-                    {
-                        { "login", account.Login },
-                        { "password", account.Password }
-                    })
+                    .Where(x => x.Login == account.Login)
                     .Single();
-                return query;
+
+                if (query != null && query.Password == account.Password)
+                {
+                    return query;
+                }
+
+                return null;
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                return null;
             }
         }
     }

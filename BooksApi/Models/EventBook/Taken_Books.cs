@@ -12,5 +12,7 @@ namespace BooksApi.Models.EventBook
         public int AccountId { get; set; }
         [Column("book_id")]
         public int BookId { get; set; }
+        [Column("created_at")]
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

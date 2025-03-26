@@ -1,6 +1,7 @@
 ﻿using BooksApi.DTO.EventBook;
 using BooksApi.Models.EventBook;
 using Microsoft.AspNetCore.Mvc;
+using BooksApi.Service.BookEventService;
 
 namespace BooksApi.Controllers.BookEventController
 {

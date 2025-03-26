@@ -1,6 +1,8 @@
 ﻿using BooksApi.Controllers.BookEventController;
+using BooksApi.Service.BookEventService;
 using BooksApi.Service.BookService;
 using BooksApi.Service.DashboardService;
+using BooksApi.Service;
 using Supabase;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,6 +30,8 @@ builder.Services.AddSingleton<Supabase.Client>(provider =>
     client.InitializeAsync().Wait();
     return client;
 });
+
+builder.Services.AddScoped<JwtService>();
 
 builder.Services.AddScoped<UserRegistrationForm>(provider =>
 {
@@ -71,6 +75,12 @@ builder.Services.AddScoped<ReturnedSavedBookService>(provider =>
     return new ReturnedSavedBookService(supabaseClient);
 });
 
+builder.Services.AddScoped<BookEventService>(provider =>
+{
+    var supabaseClient = provider.GetService<Supabase.Client>();
+    return new BookEventService(supabaseClient);
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -81,6 +91,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
+
 app.UseAuthorization();
 app.MapControllers();
 
