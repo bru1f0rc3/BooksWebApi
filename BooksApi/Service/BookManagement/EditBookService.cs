@@ -10,13 +10,23 @@ namespace BooksApi.Service.BookManagement
 
         public EditBookService(Client supabaseClient)
         {
-            _supabaseClient = supabaseClient;
+            _supabaseClient = supabaseClient ?? throw new ArgumentNullException(nameof(supabaseClient));
         }
 
         public async Task<Bookss> EditBookTask(BooksDTO bookDto)
         {
             try
             {
+                if (bookDto == null)
+                {
+                    throw new ArgumentNullException(nameof(bookDto));
+                }
+
+                if (bookDto.Id <= 0)
+                {
+                    throw new ArgumentException("Некорректный ID книги", nameof(bookDto.Id));
+                }
+
                 var book = new Bookss
                 {
                     Id = bookDto.Id,

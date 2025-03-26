@@ -10,11 +10,16 @@ namespace BooksApi.Service.BookEventService
 
         public BookEventService(Client supabaseClient)
         {
-            _supabaseClient = supabaseClient;
+            _supabaseClient = supabaseClient ?? throw new ArgumentNullException(nameof(supabaseClient));
         }
 
         public async Task<List<BookEventDTO>> GetUserBookEvents(int accountId)
         {
+            if (accountId <= 0)
+            {
+                throw new ArgumentException("Некорректный ID пользователя", nameof(accountId));
+            }
+
             var events = new List<BookEventDTO>();
 
             // Получаем сохраненные книги

@@ -11,11 +11,16 @@ namespace BooksApi.Service.BookService
 
         public SearchService(Client supabaseClient)
         {
-            _supabaseClient = supabaseClient;
+            _supabaseClient = supabaseClient ?? throw new ArgumentNullException(nameof(supabaseClient));
         }
 
         public async Task<List<BooksListDTO>> SearchBooksTask(string searchQuery)
         {
+            if (string.IsNullOrEmpty(searchQuery))
+            {
+                throw new ArgumentException("Поисковый запрос не может быть пустым", nameof(searchQuery));
+            }
+
             var query = await _supabaseClient
                 .From<Bookss>()
                 .Get();

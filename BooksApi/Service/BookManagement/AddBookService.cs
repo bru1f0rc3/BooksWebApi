@@ -10,13 +10,18 @@ namespace BooksApi.Service.BookManagement
 
         public AddBookService(Client supabaseClient)
         {
-            _supabaseClient = supabaseClient;
+            _supabaseClient = supabaseClient ?? throw new ArgumentNullException(nameof(supabaseClient));
         }
 
         public async Task<Bookss> AddBookTask(BooksDTO bookDto)
         {
             try
             {
+                if (bookDto == null)
+                {
+                    throw new ArgumentNullException(nameof(bookDto));
+                }
+
                 var book = new Bookss
                 {
                     Title = bookDto.Title,

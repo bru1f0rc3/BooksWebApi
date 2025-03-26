@@ -11,7 +11,7 @@ namespace BooksApi.Service.BookService
 
         public GetBookIdDetailsService(Client supabaseClient)
         {
-            _supabaseClient = supabaseClient;
+            _supabaseClient = supabaseClient ?? throw new ArgumentNullException(nameof(supabaseClient));
         }
 
         public async Task<List<BooksListDTO>> GetBookIdDetailsTask(int id)
