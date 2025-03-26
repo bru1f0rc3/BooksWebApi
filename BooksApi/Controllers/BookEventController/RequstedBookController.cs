@@ -1,6 +1,6 @@
 ﻿using BooksApi.DTO.EventBook;
 using BooksApi.Models.EventBook;
-using BooksApi.Service.DashboardService;
+using BooksApi.Service.BookEventService;
 using Microsoft.AspNetCore.Mvc;
 using Supabase;
 
@@ -27,7 +27,7 @@ namespace BooksApi.Controllers.BookEventController
             return Ok(new { Message = "Книга успешно запрошена" });
         }
 
-        [HttpGet]
+       [HttpGet("list/requested")]
         public async Task<IActionResult> GetRequestedBooks()
         {
             var requests = await _supabaseClient
@@ -35,7 +35,15 @@ namespace BooksApi.Controllers.BookEventController
                 .Select("*")
                 .Get();
             
-            return Ok(requests.Models);
+            var response = requests.Models.Select(r => new Requested_BooksDTO
+            {
+                Id = r.Id,
+                BookId = r.BookId,
+                AccountId = r.AccountId,
+                CreatedAt = r.CreatedAt
+            }).ToList();
+            
+            return Ok(response);
         }
 
         [HttpPost("approve/{requestId}")]

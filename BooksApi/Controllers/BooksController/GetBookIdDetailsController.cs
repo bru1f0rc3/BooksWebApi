@@ -18,7 +18,7 @@ namespace BooksApi.Controllers.Books
         {
             try
             {
-                var bookDetails = await _getBookIdDetailsService.GetBookDetailsTask(id);
+                var bookDetails = await _getBookIdDetailsService.GetBookIdDetailsTask(id);
                 if (bookDetails == null || !bookDetails.Any())
                 {
                     return NotFound(new { message = "Книга не найдена" });

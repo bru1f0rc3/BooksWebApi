@@ -3,12 +3,9 @@ using Supabase.Postgrest.Models;
 
 namespace BooksApi.DTO.Books
 {
-    [Table("Categories")]
-    public class Categories : BaseModel
+    public class BranchesDTO
     {
-        [PrimaryKey("id")]
         public int Id { get; set; }
-        [Column("name")]
         public string? Name { get; set; }
     }
 }

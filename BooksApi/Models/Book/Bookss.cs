@@ -4,7 +4,7 @@ using Supabase.Postgrest.Models;
 namespace BooksApi.Models.Book
 {
     [Table("Books")]
-    public class Books : BaseModel
+    public class Bookss : BaseModel
     {
         [PrimaryKey("id")]
         public int Id { get; set; }

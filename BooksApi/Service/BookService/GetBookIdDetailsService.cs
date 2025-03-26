@@ -1,6 +1,7 @@
 ﻿using Supabase;
 using BooksApi.DTO.Books;
 using BooksApi.Models.Book;
+using BooksApi.Models.Dashboard;
 
 namespace BooksApi.Service.BookService
 {
@@ -13,35 +14,49 @@ namespace BooksApi.Service.BookService
             _supabaseClient = supabaseClient;
         }
 
-        public async Task<List<BooksDTO>> GetBookDetailsTask(int id)
+        public async Task<List<BooksListDTO>> GetBookIdDetailsTask(int id)
         {
-            try
+            var query = await _supabaseClient
+                .From<Bookss>()
+                .Match(new Dictionary<string, string> { { "id", id.ToString() } })
+                .Get();
+
+            var booksList = new List<BooksListDTO>();
+
+            foreach (var book in query.Models)
             {
-                var query = await _supabaseClient
-                    .From<Books>()
-                    .Select("*")
-                    .Match(new Dictionary<string, string>
-                    {
-                        { "id", id.ToString() }
-                    })
+                // Получаем информацию об авторе
+                var author = await _supabaseClient
+                    .From<Authors>()
+                    .Match(new Dictionary<string, string> { { "id", book.Author.ToString() } })
                     .Get();
 
-                return query.Models.Select(book => new BooksDTO
+                // Получаем информацию о категории
+                var category = await _supabaseClient
+                    .From<Categories>()
+                    .Match(new Dictionary<string, string> { { "id", book.Categories.ToString() } })
+                    .Get();
+
+                // Получаем информацию о филиале
+                var branch = await _supabaseClient
+                    .From<Branches>()
+                    .Match(new Dictionary<string, string> { { "id", book.Branch.ToString() } })
+                    .Get();
+
+                booksList.Add(new BooksListDTO
                 {
                     Id = book.Id,
                     Title = book.Title,
                     Description = book.Description,
                     Fragment = book.Fragment,
                     Cover_Link = book.Cover_Link,
-                    Branch = book.Branch,
-                    Author = book.Author,
-                    Categories = book.Categories
-                }).ToList();
+                    Branch = branch.Models.Count > 0 ? branch.Models[0].Name : "Неизвестный филиал",
+                    Author = author.Models.Count > 0 ? author.Models[0].FullName : "Неизвестный автор",
+                    Category = category.Models.Count > 0 ? category.Models[0].Name : "Неизвестная категория"
+                });
             }
-            catch (Exception ex)
-            {
-                throw new Exception("Ошибка при загрузке книги: " + ex.Message, ex);
-            }
+
+            return booksList;
         }
     }
 }

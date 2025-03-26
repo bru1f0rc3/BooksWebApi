@@ -2,7 +2,7 @@
 using BooksApi.Models.EventBook;
 using Supabase;
 
-namespace BooksApi.Controllers.BookEventController
+namespace BooksApi.Service.BookEventService
 {
     public class RequstedTakedBookService
     {

@@ -1,5 +1,6 @@
 ﻿using BooksApi.Service.BookService;
 using Microsoft.AspNetCore.Mvc;
+using BooksApi.DTO.Books;
 
 namespace BooksApi.Controllers.Books
 {

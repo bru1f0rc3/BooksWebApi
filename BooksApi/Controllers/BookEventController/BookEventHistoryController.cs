@@ -1,6 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using BooksApi.Service.BookEventService;
 using BooksApi.DTO.EventBook;
+using BooksApi.Models.Dashboard;
+using Supabase;
+using BooksApi.Models.Book;
+using BooksApi.DTO.Books;
 
 namespace BooksApi.Controllers.BookEventController
 {
@@ -8,11 +12,13 @@ namespace BooksApi.Controllers.BookEventController
     [ApiController]
     public class BookEventHistoryController : ControllerBase
     {
-        private readonly BookEventService _bookEventService;
+        private readonly BookEventService _eventService;
+        private readonly Client _supabaseClient;
 
-        public BookEventHistoryController(BookEventService bookEventService)
+        public BookEventHistoryController(BookEventService eventService, Client supabaseClient)
         {
-            _bookEventService = bookEventService;
+            _eventService = eventService;
+            _supabaseClient = supabaseClient;
         }
 
         [HttpGet("user/{accountId}")]
@@ -20,7 +26,7 @@ namespace BooksApi.Controllers.BookEventController
         {
             try
             {
-                var events = await _bookEventService.GetUserBookEvents(accountId);
+                var events = await _eventService.GetUserBookEvents(accountId);
                 return Ok(new { events });
             }
             catch (Exception ex)
@@ -32,15 +38,46 @@ namespace BooksApi.Controllers.BookEventController
         [HttpGet("all")]
         public async Task<IActionResult> GetAllBookEvents()
         {
-            try
+            var events = await _eventService.GetAllBookEvents();
+
+            var history = new List<BookEventHistoryDTO>();
+
+            foreach (var evt in events)
             {
-                var events = await _bookEventService.GetAllBookEvents();
-                return Ok(new { events });
+                // Получаем информацию о книге
+                var book = await _supabaseClient
+                    .From<Bookss>()
+                    .Match(new Dictionary<string, string> { { "id", evt.BookId.ToString() } })
+                    .Get();
+
+                // Получаем информацию о пользователе
+                var user = await _supabaseClient
+                    .From<Account>()
+                    .Match(new Dictionary<string, string> { { "id", evt.AccountId.ToString() } })
+                    .Get();
+
+                if (book.Models.Count > 0 && user.Models.Count > 0)
+                {
+                    // Получаем информацию об авторе
+                    var author = await _supabaseClient
+                        .From<Authors>()
+                        .Match(new Dictionary<string, string> { { "id", book.Models[0].Author.ToString() } })
+                        .Get();
+
+                    history.Add(new BookEventHistoryDTO
+                    {
+                        Id = evt.Id,
+                        BookTitle = book.Models[0].Title,
+                        BookAuthor = author.Models.Count > 0 ? author.Models[0].FullName : "Неизвестный автор",
+                        UserLogin = user.Models[0].Login,
+                        UserFullName = user.Models[0].FullName,
+                        EventType = evt.EventType,
+                        CreatedAt = evt.CreatedAt
+                    });
+                }
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "Ошибка при получении истории событий", error = ex.Message });
-            }
+
+            return Ok(new { events = history });
         }
     }
 } 

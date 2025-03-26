@@ -3,11 +3,19 @@ using BooksApi.Service.BookEventService;
 using BooksApi.Service.BookService;
 using BooksApi.Service.DashboardService;
 using BooksApi.Service;
+using BooksApi.Service.BookManagement;
 using Supabase;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+    });
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -80,6 +88,24 @@ builder.Services.AddScoped<BookEventService>(provider =>
     var supabaseClient = provider.GetService<Supabase.Client>();
     return new BookEventService(supabaseClient);
 });
+
+builder.Services.AddScoped<BookEventHistoryController>(provider =>
+{
+    var eventService = provider.GetService<BookEventService>();
+    var supabaseClient = provider.GetService<Supabase.Client>();
+    return new BookEventHistoryController(eventService, supabaseClient);
+});
+
+builder.Services.AddScoped<BookEventHistoryController>(provider =>
+{
+    var eventService = provider.GetService<BookEventService>();
+    var supabaseClient = provider.GetService<Supabase.Client>();
+    return new BookEventHistoryController(eventService, supabaseClient);
+});
+
+builder.Services.AddScoped<AddBookService>();
+builder.Services.AddScoped<EditBookService>();
+builder.Services.AddScoped<DeleteBookService>();
 
 var app = builder.Build();
 
