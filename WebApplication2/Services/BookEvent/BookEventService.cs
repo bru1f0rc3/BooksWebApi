@@ -9,9 +9,10 @@ namespace WebApplication2.Services.BookEvent
         {
             const string sql = @"
                 SELECT 
-                    be.*,
+                    be.id as bookevent_id,
                     b.title as book_title,
                     a.full_name as user_name,
+                    a.id as account_id,
                     et.name as event_type_name
                 FROM ""BookEvents"" be
                 JOIN ""Books"" b ON b.id = be.book_id
@@ -27,9 +28,10 @@ namespace WebApplication2.Services.BookEvent
         {
             const string sql = @"
                 SELECT 
-                    be.*,
+                    be.id as bookevent_id,
                     b.title as book_title,
                     a.full_name as user_name,
+                    a.id as account_id,
                     et.name as event_type_name
                 FROM ""BookEvents"" be
                 JOIN ""Books"" b ON b.id = be.book_id
@@ -193,6 +195,26 @@ namespace WebApplication2.Services.BookEvent
                 WHERE account_id = @AccountId AND book_id = @BookId AND event_type_id = 1"; // 1 = Requested
             
             await DbConnect.ExecuteAsync(sql, new { AccountId = accountId, BookId = bookId });
+        }
+
+        public async Task<List<BookEventListDTO>> GetActiveRequests()
+        {
+            const string sql = @"
+                SELECT 
+                    be.id as bookevent_id,
+                    b.title as book_title,
+                    a.full_name as user_name,
+                    a.id as account_id,
+                    et.name as event_type_name
+                FROM ""BookEvents"" be
+                JOIN ""Books"" b ON b.id = be.book_id
+                JOIN ""Accounts"" a ON a.id = be.account_id
+                JOIN ""Event_Type"" et ON et.id = be.event_type_id
+                WHERE be.event_type_id = 1
+                ORDER BY be.event_date DESC";
+            
+            var requests = await DbConnect.QueryAsync<BookEventListDTO>(sql);
+            return requests.ToList();
         }
     }
 }

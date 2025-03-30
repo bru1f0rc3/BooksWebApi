@@ -116,5 +116,13 @@ namespace WebApplication2.Controllers
             await _bookEventService.CancelRequest(accountId, bookId);
             return Ok();
         }
+
+        [HttpGet("active-requests")]
+        [Authorize(Roles = "Admin,Librarian")]
+        public async Task<ActionResult<List<BookEventListDTO>>> GetActiveRequests()
+        {
+            var requests = await _bookEventService.GetActiveRequests();
+            return Ok(requests);
+        }
     }
 } 
