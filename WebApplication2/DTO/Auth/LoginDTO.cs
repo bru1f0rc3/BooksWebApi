@@ -6,7 +6,7 @@ namespace WebApplication2.DTO.Auth
         public string Password { get; set; }
     }
 
-    public class TokenDTO
+    public class TokenDTO // 1
     {
         public string Token { get; set; }
         public string Role { get; set; }
