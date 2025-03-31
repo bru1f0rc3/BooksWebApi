@@ -170,13 +170,16 @@ namespace WebApplication2.Services.BookEvent
             await DbConnect.ExecuteAsync(sql, new { AccountId = accountId, BookId = bookId });
         }
 
-        public async Task ReturnBook(int accountId, int bookId)
+        public async Task ReturnBook(int eventId)
         {
             const string sql = @"
-                INSERT INTO ""BookEvents"" (account_id, book_id, event_type_id)
-                VALUES (@AccountId, @BookId, 2)"; // 2 = Returned
+                UPDATE ""BookEvents""
+                SET event_type_id = 2,
+                    event_date = CURRENT_TIMESTAMP
+                WHERE id = @EventId 
+                AND event_type_id = 3";
             
-            await DbConnect.ExecuteAsync(sql, new { AccountId = accountId, BookId = bookId });
+            await DbConnect.ExecuteAsync(sql, new { EventId = eventId });
         }
 
         public async Task RemoveSavedBook(int accountId, int bookId)
@@ -215,6 +218,65 @@ namespace WebApplication2.Services.BookEvent
             
             var requests = await DbConnect.QueryAsync<BookEventListDTO>(sql);
             return requests.ToList();
+        }
+
+        public async Task<List<TakedBookDTO>> GetTakedBooks()
+        {
+            const string sql = @"
+                SELECT 
+                    be.id as book_event_id,
+                    b.id as book_id,
+                    b.title as book_title,
+                    be.account_id,
+                    a.full_name as user_name,
+                    be.event_date,
+                    au.full_name as author_name,
+                    c.name as category_name,
+                    br.name as branch_name
+                FROM ""BookEvents"" be
+                JOIN ""Books"" b ON b.id = be.book_id
+                JOIN ""Accounts"" a ON a.id = be.account_id
+                JOIN ""Authors"" au ON au.id = b.author_id
+                JOIN ""Categories"" c ON c.id = b.category_id
+                JOIN ""Branches"" br ON br.id = b.branch_id
+                WHERE be.event_type_id = 3
+                AND NOT EXISTS (
+                    SELECT 1 
+                    FROM ""BookEvents"" be2
+                    WHERE be2.book_id = be.book_id
+                    AND be2.event_date > be.event_date
+                    AND be2.event_type_id = 2
+                )
+                ORDER BY be.event_date DESC";
+            
+            var takedBooks = await DbConnect.QueryAsync<TakedBookDTO>(sql);
+            return takedBooks.ToList();
+        }
+
+        public async Task<List<UserBookEventDTO>> GetUserBooksByEventType(int accountId, int eventTypeId)
+        {
+            const string sql = @"
+                SELECT 
+                    be.id as book_event_id,
+                    b.id as book_id,
+                    b.title as book_title,
+                    au.full_name as author_name,
+                    c.name as category_name,
+                    br.name as branch_name,
+                    be.event_date,
+                    et.name as event_type_name
+                FROM ""BookEvents"" be
+                JOIN ""Books"" b ON b.id = be.book_id
+                JOIN ""Authors"" au ON au.id = b.author_id
+                JOIN ""Categories"" c ON c.id = b.category_id
+                JOIN ""Branches"" br ON br.id = b.branch_id
+                JOIN ""Event_Type"" et ON et.id = be.event_type_id
+                WHERE be.account_id = @AccountId 
+                AND be.event_type_id = @EventTypeId
+                ORDER BY be.event_date DESC";
+            
+            var books = await DbConnect.QueryAsync<UserBookEventDTO>(sql, new { AccountId = accountId, EventTypeId = eventTypeId });
+            return books.ToList();
         }
     }
 }

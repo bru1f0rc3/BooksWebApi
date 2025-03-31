@@ -6,6 +6,9 @@ using WebApplication2.Services.Book;
 using WebApplication2.Services.BookEvent;
 using WebApplication2.Services.Dashboard;
 using WebApplication2.Services.Auth;
+using WebApplication2.Services.Author;
+using WebApplication2.Services.Category;
+using WebApplication2.Services.Branch;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +39,10 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<BookService>();
 builder.Services.AddScoped<BookEventService>();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<AuthorService>();
+builder.Services.AddScoped<CategoryService>();
+builder.Services.AddScoped<BranchService>();
+
 
 var app = builder.Build();
 

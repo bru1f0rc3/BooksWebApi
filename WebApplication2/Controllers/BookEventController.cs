@@ -93,11 +93,10 @@ namespace WebApplication2.Controllers
             return Ok();
         }
 
-        [Route("return")]
-        [HttpPost]
-        public async Task<ActionResult> ReturnBook(int accountId, int bookId)
+        [HttpPost("return/{eventId}")]
+        public async Task<ActionResult> ReturnBook(int eventId)
         {
-            await _bookEventService.ReturnBook(accountId, bookId);
+            await _bookEventService.ReturnBook(eventId);
             return Ok();
         }
 
@@ -123,6 +122,41 @@ namespace WebApplication2.Controllers
         {
             var requests = await _bookEventService.GetActiveRequests();
             return Ok(requests);
+        }
+
+        [HttpGet("taked-books")]
+        public async Task<ActionResult<List<TakedBookDTO>>> GetTakedBooks()
+        {
+            var takedBooks = await _bookEventService.GetTakedBooks();
+            return Ok(takedBooks);
+        }
+
+        [HttpGet("user/{accountId}/requested")]
+        public async Task<ActionResult<List<UserBookEventDTO>>> GetUserRequestedBooks(int accountId)
+        {
+            var books = await _bookEventService.GetUserBooksByEventType(accountId, 1); // 1 = Requested
+            return Ok(books);
+        }
+
+        [HttpGet("user/{accountId}/returned")]
+        public async Task<ActionResult<List<UserBookEventDTO>>> GetUserReturnedBooks(int accountId)
+        {
+            var books = await _bookEventService.GetUserBooksByEventType(accountId, 2); // 2 = Returned
+            return Ok(books);
+        }
+
+        [HttpGet("user/{accountId}/taked")]
+        public async Task<ActionResult<List<UserBookEventDTO>>> GetUserTakedBooks(int accountId)
+        {
+            var books = await _bookEventService.GetUserBooksByEventType(accountId, 3); // 3 = Taked
+            return Ok(books);
+        }
+
+        [HttpGet("user/{accountId}/saved")]
+        public async Task<ActionResult<List<UserBookEventDTO>>> GetUserSavedBooks(int accountId)
+        {
+            var books = await _bookEventService.GetUserBooksByEventType(accountId, 4); // 4 = Saved
+            return Ok(books);
         }
     }
 } 
