@@ -17,7 +17,19 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Добавляем JWT аутентификацию
+// Настройка CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+});
+
+// Настройка JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -29,12 +41,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
         };
     });
 
-// Регистрируем сервисы
+// Регистрация сервисов
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<BookService>();
 builder.Services.AddScoped<BookEventService>();
@@ -43,9 +54,9 @@ builder.Services.AddScoped<AuthorService>();
 builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<BranchService>();
 
-
 var app = builder.Build();
 
+// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -53,11 +64,32 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-// Добавляем middleware для аутентификации и авторизации
+app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
+
+// Получаем информацию о порте и IP
+var kestrelUrl = builder.Configuration["Kestrel:Endpoints:Http:Url"];
+var port = 5000; // порт по умолчанию
+if (!string.IsNullOrEmpty(kestrelUrl))
+{
+    var uri = new Uri(kestrelUrl);
+    port = uri.Port;
+}
+
+var hostName = System.Net.Dns.GetHostName();
+var ips = System.Net.Dns.GetHostAddresses(hostName)
+    .Where(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+    .Select(ip => ip.ToString())
+    .ToList();
+
+Console.WriteLine($"\nAPI запущен на порту: {port}");
+Console.WriteLine("Доступные IP-адреса:");
+foreach (var ip in ips)
+{
+    Console.WriteLine($"http://{ip}:{port}");
+}
+Console.WriteLine($"\nSwagger UI доступен по адресу: http://localhost:{port}/swagger\n");
 
 app.Run();
