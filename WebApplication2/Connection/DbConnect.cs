@@ -6,7 +6,7 @@ namespace WebApplication2.Connection
 {
     public static class DbConnect
     {
-        private static readonly string connectionString = "Host=localhost;Port=5432;Database=postgres;Username=postgres;Password=123123";
+        private static readonly string connectionString = "User Id=postgres.uvobqbanbbtrbnmsghxb;Password=efanep5502A5502$@;Server=aws-0-eu-central-1.pooler.supabase.com;Port=5432;Database=postgres";
 
         public static async Task<IEnumerable<T>> QueryAsync<T>(string sql, object? param = null)
         {
