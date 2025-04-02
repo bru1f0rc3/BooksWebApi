@@ -190,6 +190,15 @@ namespace WebApplication2.Services.Book
                 throw new Exception("Книга не найдена");
             }
 
+            // Формируем полный URL для изображения
+            if (!string.IsNullOrEmpty(book.cover_link))
+            {
+                if (!book.cover_link.StartsWith("http://") && !book.cover_link.StartsWith("https://"))
+                {
+                    book.cover_link = $"/coverlink/{book.cover_link}";
+                }
+            }
+
             return book;
         }
     }
