@@ -84,12 +84,12 @@ namespace WebApplication2.Controllers
             return Ok("Запрос успешно принят");
         }
 
-        [HttpPost("reject/{eventId}")]
+        [HttpPost("reject/{eventId}/{librarianId}")]
         [Authorize(Roles = "Admin,Librarian")]
         public async Task<ActionResult> RejectRequest(int eventId, int librarianId)
         {
             await _bookEventService.RejectRequest(eventId, librarianId);
-            return Ok();
+            return Ok("Запрос отклонен");
         }
 
         [HttpPost("save")]
@@ -133,6 +133,21 @@ namespace WebApplication2.Controllers
         {
             var books = await _bookEventService.GetAllTakedBooks();
             return Ok(books);
+        }
+
+        [HttpGet]
+        [Route("request/{eventId}/detail")]
+        public async Task<ActionResult<BookRequestDetailDTO>> GetRequestDetail(int eventId)
+        {
+            try
+            {
+                var request = await _bookEventService.GetRequestDetail(eventId);
+                return Ok(request);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
     }
 } 

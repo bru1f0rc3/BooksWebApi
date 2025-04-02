@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using WebApplication2.DTO.Book;
 using WebApplication2.Services.Book;
+using Microsoft.AspNetCore.Http;
 
 namespace WebApplication2.Controllers
 {
@@ -23,17 +24,31 @@ namespace WebApplication2.Controllers
         }
         [Route("add")]
         [HttpPost]
-        public async Task<ActionResult> AddBook(AddBook book)
+        public async Task<IActionResult> AddBook([FromForm] AddBook book, IFormFile? coverImage)
         {
-            await _bookService.AddBook(book);
-            return Ok();
+            try
+            {
+                await _bookService.AddBook(book, coverImage);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         [Route("edit")]
         [HttpPut]
-        public async Task<ActionResult> EditBook(EditBook book)
+        public async Task<IActionResult> EditBook([FromForm] EditBook book, IFormFile? coverImage)
         {
-            await _bookService.EditBook(book);
-            return Ok();
+            try
+            {
+                await _bookService.EditBook(book, coverImage);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         [HttpDelete("{id}")]
         public async Task<ActionResult> RemoveBook(int id)
@@ -47,6 +62,20 @@ namespace WebApplication2.Controllers
         {
             var books = await _bookService.SearchBooks(searchTerm, categoryId);
             return Ok(books);
+        }
+        [HttpGet]
+        [Route("{id}/detail")]
+        public async Task<ActionResult<BookDetailDTO>> GetBookDetail(int id)
+        {
+            try
+            {
+                var book = await _bookService.GetBookDetail(id);
+                return Ok(book);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
     }
 } 

@@ -9,6 +9,8 @@ using WebApplication2.Services.Auth;
 using WebApplication2.Services.Author;
 using WebApplication2.Services.Category;
 using WebApplication2.Services.Branch;
+using WebApplication2.Services.File;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +29,15 @@ builder.Services.AddCors(options =>
                    .AllowAnyMethod()
                    .AllowAnyHeader();
         });
+});
+
+// Настройка Kestrel для HTTPS
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.ListenAnyIP(5000, listenOptions =>
+    {
+        listenOptions.UseHttps();
+    });
 });
 
 // Настройка JWT
@@ -53,6 +64,7 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<AuthorService>();
 builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<BranchService>();
+builder.Services.AddScoped<FileService>();
 
 var app = builder.Build();
 
@@ -67,17 +79,18 @@ app.UseHttpsRedirection();
 app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Добавляем middleware для обслуживания статических файлов из папки coverlink
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(app.Environment.ContentRootPath, "coverlink")),
+    RequestPath = "/coverlink"
+});
+
 app.MapControllers();
 
-// Получаем информацию о порте и IP
-var kestrelUrl = builder.Configuration["Kestrel:Endpoints:Http:Url"];
-var port = 5000; // порт по умолчанию
-if (!string.IsNullOrEmpty(kestrelUrl))
-{
-    var uri = new Uri(kestrelUrl);
-    port = uri.Port;
-}
-
+var port = 5000;
 var hostName = System.Net.Dns.GetHostName();
 var ips = System.Net.Dns.GetHostAddresses(hostName)
     .Where(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
@@ -88,8 +101,8 @@ Console.WriteLine($"\nAPI запущен на порту: {port}");
 Console.WriteLine("Доступные IP-адреса:");
 foreach (var ip in ips)
 {
-    Console.WriteLine($"http://{ip}:{port}");
+    Console.WriteLine($"https://{ip}:{port}");
 }
-Console.WriteLine($"\nSwagger UI доступен по адресу: http://localhost:{port}/swagger\n");
+Console.WriteLine($"\nSwagger UI доступен по адресу: https://localhost:{port}/swagger\n");
 
 app.Run();

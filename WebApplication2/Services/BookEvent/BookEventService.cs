@@ -114,32 +114,32 @@ namespace WebApplication2.Services.BookEvent
         public async Task<bool> AcceptRequest(int eventId, int librarianId)
         {
             const string checkSql = @"
-                SELECT COUNT(1) 
-                FROM ""BookEvents"" 
-                WHERE id = @EventId AND event_type_id = 1";
+        SELECT COUNT(1) 
+        FROM ""BookEvents"" 
+        WHERE id = @EventId AND event_type_id = 1";
 
             var exists = await DbConnect.QueryFirstOrDefaultAsync<int>(checkSql, new { EventId = eventId });
             if (exists == 0)
                 return false;
 
             const string sql = @"
-                UPDATE ""BookEvents""
-                SET event_type_id = 3,
-                    account_id = @LibrarianId,
-                    event_date = CURRENT_TIMESTAMP
-                WHERE id = @EventId AND event_type_id = 1";
-            
-            var rowsAffected = await DbConnect.ExecuteAsync(sql, new { EventId = eventId, LibrarianId = librarianId });
+        UPDATE ""BookEvents""
+        SET event_type_id = 3,
+            event_date = CURRENT_TIMESTAMP
+        WHERE id = @EventId AND event_type_id = 1";
+
+            var rowsAffected = await DbConnect.ExecuteAsync(sql, new { EventId = eventId });
             return rowsAffected > 0;
         }
 
         public async Task RejectRequest(int eventId, int librarianId)
         {
             const string sql = @"
-                UPDATE ""BookEvents""
-                SET event_type_id = 5
-                WHERE id = @EventId AND event_type_id = 1";
-            
+        UPDATE ""BookEvents""
+        SET event_type_id = 5,
+            event_date = CURRENT_TIMESTAMP
+        WHERE id = @EventId AND event_type_id = 1";
+
             await DbConnect.ExecuteAsync(sql, new { EventId = eventId });
         }
 
@@ -216,6 +216,37 @@ namespace WebApplication2.Services.BookEvent
             
             var books = await DbConnect.QueryAsync<BookEventListDTO>(sql);
             return books.ToList();
+        }
+
+        public async Task<BookRequestDetailDTO> GetRequestDetail(int eventId)
+        {
+            const string sql = @"
+                SELECT 
+                    be.id as event_id,
+                    be.book_id,
+                    b.title as book_title,
+                    b.description as book_description,
+                    c.name as category_name,
+                    br.name as branch_name,
+                    be.account_id as user_id,
+                    a.full_name as user_fullname,
+                    a.phone as user_phone,
+                    be.event_date
+                FROM ""BookEvents"" be
+                JOIN ""Books"" b ON b.id = be.book_id
+                JOIN ""Categories"" c ON c.id = b.category_id
+                JOIN ""Branches"" br ON br.id = b.branch_id
+                JOIN ""Accounts"" a ON a.id = be.account_id
+                WHERE be.id = @EventId
+                AND be.event_type_id = 1";
+
+            var request = await DbConnect.QueryFirstOrDefaultAsync<BookRequestDetailDTO>(sql, new { EventId = eventId });
+            if (request == null)
+            {
+                throw new Exception("Запрос не найден");
+            }
+
+            return request;
         }
     }
 }
