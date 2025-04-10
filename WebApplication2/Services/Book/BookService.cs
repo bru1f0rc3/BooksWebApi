@@ -37,8 +37,7 @@ namespace WebApplication2.Services.Book
                 JOIN ""Branches"" ON ""Branches"".id = ""Books"".branch_id";
             
             var books = await DbConnect.QueryAsync<BookListDTO>(listBook);
-            
-            // Формируем полные URL для изображений
+
             foreach (var book in books)
             {
                 if (!string.IsNullOrEmpty(book.cover_link))
@@ -190,7 +189,6 @@ namespace WebApplication2.Services.Book
                 throw new Exception("Книга не найдена");
             }
 
-            // Формируем полный URL для изображения
             if (!string.IsNullOrEmpty(book.cover_link))
             {
                 if (!book.cover_link.StartsWith("http://") && !book.cover_link.StartsWith("https://"))

@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using WebApplication2.Services;
 using WebApplication2.Services.Book;
 using WebApplication2.Services.BookEvent;
 using WebApplication2.Services.Dashboard;
@@ -60,6 +59,7 @@ builder.Services.AddScoped<AuthorService>();
 builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<BranchService>();
 builder.Services.AddScoped<FileService>();
+builder.Services.AddScoped<BookEventReportService>();
 
 var app = builder.Build();
 

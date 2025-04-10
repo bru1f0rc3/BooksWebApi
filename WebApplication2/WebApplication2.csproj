@@ -15,8 +15,11 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.66" />
+    <PackageReference Include="itext7" Version="9.1.0" />
+    <PackageReference Include="itext7.pdfhtml" Version="6.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
     <PackageReference Include="Npgsql" Version="9.0.3" />
+    <PackageReference Include="PDFsharp" Version="6.1.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
     <PackageReference Include="System.Data.Common" Version="4.3.0" />
   </ItemGroup>
