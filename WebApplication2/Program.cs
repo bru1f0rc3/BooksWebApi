@@ -14,12 +14,10 @@ using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Настройка CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
@@ -31,16 +29,14 @@ builder.Services.AddCors(options =>
         });
 });
 
-// Настройка Kestrel для HTTPS
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
-    serverOptions.ListenAnyIP(5000, listenOptions =>
+    serverOptions.ListenAnyIP(7200, listenOptions =>
     {
         listenOptions.UseHttps();
     });
 });
 
-// Настройка JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -56,7 +52,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// Регистрация сервисов
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<BookService>();
 builder.Services.AddScoped<BookEventService>();
@@ -68,7 +63,19 @@ builder.Services.AddScoped<FileService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+var coverLinkPath = Path.Combine(builder.Environment.ContentRootPath, "coverlink");
+if (!Directory.Exists(coverLinkPath))
+{
+    Directory.CreateDirectory(coverLinkPath);
+}
+
+app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(coverLinkPath),
+    RequestPath = "/coverlink"
+});
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -80,17 +87,9 @@ app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Добавляем middleware для обслуживания статических файлов из папки coverlink
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(
-        Path.Combine(app.Environment.ContentRootPath, "coverlink")),
-    RequestPath = "/coverlink"
-});
-
 app.MapControllers();
 
-var port = 5000;
+var port = 7200;
 var hostName = System.Net.Dns.GetHostName();
 var ips = System.Net.Dns.GetHostAddresses(hostName)
     .Where(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
