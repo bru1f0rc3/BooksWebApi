@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using WebApplication2.DTO.Auth;
 using WebApplication2.Services.Auth;
 
-namespace WebApplication2.Controllers
+namespace WebApplication2.Controllers.Dashboard
 {
     [ApiController]
     [Route("api/auth")]

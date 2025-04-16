@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using WebApplication2.DTO.Branch;
 using WebApplication2.Services.Branch;
 
-namespace WebApplication2.Controllers
+namespace WebApplication2.Controllers.Book
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -37,7 +37,7 @@ namespace WebApplication2.Controllers
         public async Task<ActionResult<BranchDTO>> CreateBranch(CreateBranchDTO branch)
         {
             var createdBranch = await _branchService.CreateBranch(branch);
-            return CreatedAtAction(nameof(GetBranchById), new { id = createdBranch.id }, createdBranch);
+            return CreatedAtAction(nameof(GetBranchById), new { createdBranch.id }, createdBranch);
         }
 
         [HttpPut("{id}")]

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using WebApplication2.DTO.BookEvent;
 using WebApplication2.Services.BookEvent;
 
-namespace WebApplication2.Controllers
+namespace WebApplication2.Controllers.BookEvent
 {
     [ApiController]
     [Route("api/book-event-report")]

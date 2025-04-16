@@ -3,7 +3,7 @@ using WebApplication2.DTO.Book;
 using WebApplication2.Services.Book;
 using Microsoft.AspNetCore.Http;
 
-namespace WebApplication2.Controllers
+namespace WebApplication2.Controllers.Book
 {
     [ApiController]
     [Route("api/book")]

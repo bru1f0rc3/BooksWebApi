@@ -4,7 +4,7 @@ using WebApplication2.Services.BookEvent;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 
-namespace WebApplication2.Controllers
+namespace WebApplication2.Controllers.BookEvent
 {
     [ApiController]
     [Route("api/book-event")]

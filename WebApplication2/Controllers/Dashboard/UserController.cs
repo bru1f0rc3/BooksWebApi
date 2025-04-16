@@ -4,7 +4,7 @@ using WebApplication2.Services.Dashboard;
 using WebApplication2.Models;
 using WebApplication2.Services;
 
-namespace WebApplication2.Controllers
+namespace WebApplication2.Controllers.Dashboard
 {
     [ApiController]
     [Route("api/user")]

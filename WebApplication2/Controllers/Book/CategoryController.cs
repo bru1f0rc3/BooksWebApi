@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using WebApplication2.DTO.Category;
 using WebApplication2.Services.Category;
 
-namespace WebApplication2.Controllers
+namespace WebApplication2.Controllers.Book
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -37,7 +37,7 @@ namespace WebApplication2.Controllers
         public async Task<ActionResult<CategoryDTO>> CreateCategory(CreateCategoryDTO category)
         {
             var createdCategory = await _categoryService.CreateCategory(category);
-            return CreatedAtAction(nameof(GetCategoryById), new { id = createdCategory.id }, createdCategory);
+            return CreatedAtAction(nameof(GetCategoryById), new { createdCategory.id }, createdCategory);
         }
 
         [HttpPut("{id}")]

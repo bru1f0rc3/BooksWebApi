@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using WebApplication2.DTO.Author;
 using WebApplication2.Services.Author;
 
-namespace WebApplication2.Controllers
+namespace WebApplication2.Controllers.Book
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -37,7 +37,7 @@ namespace WebApplication2.Controllers
         public async Task<ActionResult<AuthorDTO>> CreateAuthor(CreateAuthorDTO author)
         {
             var createdAuthor = await _authorService.CreateAuthor(author);
-            return CreatedAtAction(nameof(GetAuthorById), new { id = createdAuthor.id }, createdAuthor);
+            return CreatedAtAction(nameof(GetAuthorById), new { createdAuthor.id }, createdAuthor);
         }
 
         [HttpPut("{id}")]
