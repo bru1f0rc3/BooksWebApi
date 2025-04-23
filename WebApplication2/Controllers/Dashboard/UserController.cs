@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using WebApplication2.DTO.Dashboard;
 using WebApplication2.Services.Dashboard;
-using WebApplication2.Models;
-using WebApplication2.Services;
 
 namespace WebApplication2.Controllers.Dashboard
 {
