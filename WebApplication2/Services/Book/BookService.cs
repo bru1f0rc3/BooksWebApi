@@ -1,8 +1,6 @@
-﻿using WebApplication2.DTO;
-using WebApplication2.Connection;
+﻿using WebApplication2.Connection;
 using WebApplication2.DTO.Book;
 using Dapper;
-using Microsoft.AspNetCore.Http;
 using WebApplication2.Services.File;
 
 namespace WebApplication2.Services.Book

@@ -1,6 +1,3 @@
-using System.IO;
-using Microsoft.AspNetCore.Http;
-
 namespace WebApplication2.Services.File
 {
     public class FileService
