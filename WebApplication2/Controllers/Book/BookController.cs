@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using WebApplication2.DTO.Book;
 using WebApplication2.Services.Book;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApplication2.Controllers.Book
 {
@@ -15,67 +16,58 @@ namespace WebApplication2.Controllers.Book
         {
             _bookService = bookService;
         }
+
         [Route("list")]
         [HttpGet]
-        public async Task<ActionResult<List<BookListDTO>>> GetBooks()
+        [AllowAnonymous]
+        public async Task<ActionResult<IEnumerable<BookListDto>>> GetBooks()
         {
             var books = await _bookService.BookListedGet();
             return Ok(books);
         }
+
         [Route("add")]
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddBook([FromForm] AddBook book, IFormFile? coverImage)
         {
-            try
-            {
-                await _bookService.AddBook(book, coverImage);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            await _bookService.AddBook(book, coverImage);
+            return Ok();
         }
+
         [Route("edit")]
         [HttpPut]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditBook([FromForm] EditBook book, IFormFile? coverImage)
         {
-            try
-            {
-                await _bookService.EditBook(book, coverImage);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            await _bookService.EditBook(book, coverImage);
+            return Ok();
         }
+
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> RemoveBook(int id)
         {
             await _bookService.RemoveBook(id);
             return Ok();
         }
+
         [Route("search")]
         [HttpGet]
-        public async Task<ActionResult<List<BookListDTO>>> SearchBooks([FromQuery] string? searchTerm, [FromQuery] int? categoryId)
+        [AllowAnonymous]
+        public async Task<ActionResult<IEnumerable<BookListDto>>> SearchBooks([FromQuery] string? searchTerm, [FromQuery] int? categoryId)
         {
             var books = await _bookService.SearchBooks(searchTerm, categoryId);
             return Ok(books);
         }
+
         [HttpGet]
         [Route("{id}/detail")]
-        public async Task<ActionResult<BookDetailDTO>> GetBookDetail(int id)
+        [AllowAnonymous]
+        public async Task<ActionResult<BookDetailDto>> GetBookDetail(int id)
         {
-            try
-            {
-                var book = await _bookService.GetBookDetail(id);
-                return Ok(book);
-            }
-            catch (Exception ex)
-            {
-                return NotFound(ex.Message);
-            }
+            var book = await _bookService.GetBookDetail(id);
+            return Ok(book);
         }
     }
-} 
+}
