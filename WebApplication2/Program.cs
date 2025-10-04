@@ -10,6 +10,7 @@ using WebApplication2.Services.Category;
 using WebApplication2.Services.Branch;
 using WebApplication2.Services.File;
 using Microsoft.Extensions.FileProviders;
+using WebApplication2.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -63,6 +64,9 @@ builder.Services.AddScoped<BookEventReportService>();
 
 var app = builder.Build();
 
+// Global exception middleware - MUST be first in pipeline
+app.UseMiddleware<GlobalExceptionMiddleware>();
+
 var coverLinkPath = Path.Combine(builder.Environment.ContentRootPath, "coverlink");
 if (!Directory.Exists(coverLinkPath))
 {
@@ -84,6 +88,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
+
 app.UseAuthentication();
 app.UseAuthorization();
 
