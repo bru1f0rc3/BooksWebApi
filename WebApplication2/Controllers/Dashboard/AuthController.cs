@@ -19,11 +19,11 @@ namespace WebApplication2.Controllers.Dashboard
         public async Task<ActionResult<TokenDTO>> Login(LoginDTO login)
         {
             var result = await _authService.Login(login);
-            
+
             if (result == null)
                 return Unauthorized("Неверный логин или пароль");
 
             return Ok(result);
         }
     }
-} 
+}

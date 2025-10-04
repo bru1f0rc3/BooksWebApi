@@ -19,14 +19,14 @@ namespace WebApplication2.Services.BookEvent
                 JOIN ""Accounts"" a ON a.id = be.account_id
                 JOIN ""Event_Type"" et ON et.id = be.event_type_id
                 ORDER BY be.event_date DESC";
-            
+
             var events = await DbConnect.QueryAsync<BookEventListDTO>(sql);
             return events.ToList();
         }
 
         public async Task<List<BookEventListDTO>> GetActiveRequests()
         {
-                const string sql = @"
+            const string sql = @"
                 SELECT 
                     be.id as bookevent_id,
                     b.title as book_title,
@@ -39,7 +39,7 @@ namespace WebApplication2.Services.BookEvent
                 JOIN ""Event_Type"" et ON et.id = be.event_type_id
                 WHERE be.event_type_id = 1
                 ORDER BY be.event_date DESC";
-            
+
             var requests = await DbConnect.QueryAsync<BookEventListDTO>(sql);
             return requests.ToList();
         }
@@ -71,7 +71,7 @@ namespace WebApplication2.Services.BookEvent
                 JOIN ""Branches"" br ON br.id = b.branch_id
                 JOIN ""Event_Type"" et ON et.id = le.last_event_type_id
                 ORDER BY le.last_event_date DESC";
-            
+
             var history = await DbConnect.QueryAsync<UserBookHistoryDTO>(sql, new { AccountId = accountId });
             return history.ToList();
         }
@@ -97,7 +97,7 @@ namespace WebApplication2.Services.BookEvent
                 WHERE be.account_id = @AccountId 
                 AND be.event_type_id = @EventTypeId
                 ORDER BY be.event_date DESC";
-            
+
             var books = await DbConnect.QueryAsync<UserBookEventDTO>(sql, new { AccountId = accountId, EventTypeId = eventTypeId });
             return books.ToList();
         }
@@ -107,7 +107,7 @@ namespace WebApplication2.Services.BookEvent
             const string sql = @"
                 INSERT INTO ""BookEvents"" (account_id, book_id, event_type_id)
                 VALUES (@AccountId, @BookId, 1)"; // 1 = Requested
-            
+
             await DbConnect.ExecuteAsync(sql, new { AccountId = accountId, BookId = bookId });
         }
 
@@ -148,7 +148,7 @@ namespace WebApplication2.Services.BookEvent
             const string sql = @"
                 INSERT INTO ""BookEvents"" (account_id, book_id, event_type_id)
                 VALUES (@AccountId, @BookId, 4)"; // 4 = Saved
-            
+
             await DbConnect.ExecuteAsync(sql, new { AccountId = accountId, BookId = bookId });
         }
 
@@ -157,7 +157,7 @@ namespace WebApplication2.Services.BookEvent
             const string sql = @"
                 INSERT INTO ""BookEvents"" (account_id, book_id, event_type_id)
                 VALUES (@AccountId, @BookId, 3)"; // 3 = Taked
-            
+
             await DbConnect.ExecuteAsync(sql, new { AccountId = accountId, BookId = bookId });
         }
 
@@ -169,7 +169,7 @@ namespace WebApplication2.Services.BookEvent
                     event_date = CURRENT_TIMESTAMP
                 WHERE id = @EventId 
                 AND event_type_id = 3";
-            
+
             await DbConnect.ExecuteAsync(sql, new { EventId = eventId });
         }
 
@@ -178,7 +178,7 @@ namespace WebApplication2.Services.BookEvent
             const string sql = @"
                 DELETE FROM ""BookEvents""
                 WHERE account_id = @AccountId AND book_id = @BookId AND event_type_id = 4";
-            
+
             await DbConnect.ExecuteAsync(sql, new { AccountId = accountId, BookId = bookId });
         }
 
@@ -187,7 +187,7 @@ namespace WebApplication2.Services.BookEvent
             const string sql = @"
                 DELETE FROM ""BookEvents""
                 WHERE account_id = @AccountId AND book_id = @BookId AND event_type_id = 1";
-            
+
             await DbConnect.ExecuteAsync(sql, new { AccountId = accountId, BookId = bookId });
         }
 
@@ -213,7 +213,7 @@ namespace WebApplication2.Services.BookEvent
                 JOIN ""Branches"" br ON br.id = b.branch_id
                 WHERE be.event_type_id = 3
                 ORDER BY be.event_date DESC";
-            
+
             var books = await DbConnect.QueryAsync<BookEventListDTO>(sql);
             return books.ToList();
         }

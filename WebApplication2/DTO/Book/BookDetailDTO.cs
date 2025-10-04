@@ -14,4 +14,4 @@ namespace WebApplication2.DTO.Book
         public int branch_id { get; set; }
         public string branch_name { get; set; }
     }
-} 
+}

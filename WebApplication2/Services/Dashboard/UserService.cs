@@ -10,7 +10,7 @@ namespace WebApplication2.Services.Dashboard
             const string sql = @"
                 INSERT INTO ""Accounts"" (login, password, full_name, phone, email) 
                 VALUES (@login, @password, @full_name, @phone, @email)";
-         
+
             await DbConnect.ExecuteAsync(sql, user);
         }
 
@@ -48,4 +48,4 @@ namespace WebApplication2.Services.Dashboard
             return rowsAffected > 0;
         }
     }
-} 
+}

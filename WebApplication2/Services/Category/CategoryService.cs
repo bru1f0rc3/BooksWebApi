@@ -24,7 +24,7 @@ namespace WebApplication2.Services.Category
                 INSERT INTO ""Categories"" (name)
                 VALUES (@name)
                 RETURNING *";
-            
+
             return await DbConnect.QueryFirstOrDefaultAsync<CategoryDTO>(sql, new { Name = category.name });
         }
 
@@ -35,7 +35,7 @@ namespace WebApplication2.Services.Category
                 SET name = @name
                 WHERE id = @id
                 RETURNING *";
-            
+
             return await DbConnect.QueryFirstOrDefaultAsync<CategoryDTO>(sql, new { id = id, Name = category.name });
         }
 
@@ -46,4 +46,4 @@ namespace WebApplication2.Services.Category
             return rowsAffected > 0;
         }
     }
-} 
+}

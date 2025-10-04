@@ -33,7 +33,7 @@ namespace WebApplication2.Services.Book
                 JOIN ""Authors"" ON ""Authors"".id = ""Books"".author_id
                 JOIN ""Categories"" ON ""Categories"".id = ""Books"".category_id
                 JOIN ""Branches"" ON ""Branches"".id = ""Books"".branch_id";
-            
+
             var books = await DbConnect.QueryAsync<BookListDTO>(listBook);
 
             foreach (var book in books)
@@ -61,7 +61,7 @@ namespace WebApplication2.Services.Book
             const string addBook = @"
                 INSERT INTO ""Books"" (title, description, fragment, cover_link, author_id, branch_id, category_id) 
                 VALUES (@Title, @Description, @Fragment, @CoverLink, @AuthorId, @BranchId, @CategoryId)";
-            
+
             await DbConnect.ExecuteAsync(addBook, new
             {
                 book.Title,
@@ -96,7 +96,7 @@ namespace WebApplication2.Services.Book
                     branch_id = @BranchId,
                     category_id = @CategoryId
                 WHERE id = @Id";
-            
+
             await DbConnect.ExecuteAsync(editBook, new
             {
                 book.Id,
@@ -114,7 +114,7 @@ namespace WebApplication2.Services.Book
         {
             const string getBookSql = "SELECT cover_link FROM \"Books\" WHERE id = @Id";
             var book = await DbConnect.QueryFirstOrDefaultAsync<dynamic>(getBookSql, new { Id = id });
-            
+
             if (book != null && !string.IsNullOrEmpty(book.cover_link))
             {
                 _fileService.DeleteImage(book.cover_link);

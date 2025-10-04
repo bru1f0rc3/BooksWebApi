@@ -24,7 +24,7 @@ namespace WebApplication2.Services.Author
                 INSERT INTO ""Authors"" (full_name)
                 VALUES (@full_name)
                 RETURNING id, full_name";
-            
+
             return await DbConnect.QueryFirstOrDefaultAsync<AuthorDTO>(sql, new { full_name = author.full_name });
         }
 
@@ -35,7 +35,7 @@ namespace WebApplication2.Services.Author
                 SET full_name = @full_name
                 WHERE id = @id
                 RETURNING id, full_name";
-            
+
             return await DbConnect.QueryFirstOrDefaultAsync<AuthorDTO>(sql, new { id, full_name = author.full_name });
         }
 
@@ -46,4 +46,4 @@ namespace WebApplication2.Services.Author
             return rowsAffected > 0;
         }
     }
-} 
+}

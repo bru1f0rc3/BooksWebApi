@@ -21,7 +21,7 @@ namespace WebApplication2.Services.BookEvent
             try
             {
                 filter ??= new BookEventFilterDTO();
-                
+
                 var events = await GetFilteredEventsAsync(filter);
                 if (!events.Any())
                 {
@@ -34,21 +34,21 @@ namespace WebApplication2.Services.BookEvent
                     var page = document.AddPage();
                     page.Size = PdfSharp.PageSize.A4;
                     page.Orientation = PdfSharp.PageOrientation.Landscape;
-                    
+
                     var gfx = XGraphics.FromPdfPage(page);
                     var font = new XFont("Arial", 10);
                     var boldFont = new XFont("Arial", 10);
                     var titleFont = new XFont("Arial", 16);
                     double margin = 50;
                     double usableWidth = page.Width - 2 * margin;
-                    
+
                     var columnWidths = new[]
                     {
                         usableWidth * 0.12,
-                        usableWidth * 0.23, 
-                        usableWidth * 0.25, 
+                        usableWidth * 0.23,
+                        usableWidth * 0.25,
                         usableWidth * 0.20,
-                        usableWidth * 0.20 
+                        usableWidth * 0.20
                     };
 
                     var columnX = new double[5];
@@ -58,12 +58,12 @@ namespace WebApplication2.Services.BookEvent
                         columnX[i] = columnX[i - 1] + columnWidths[i - 1];
                     }
 
-                    gfx.DrawString("Book Events Report", titleFont, XBrushes.Black, 
+                    gfx.DrawString("Book Events Report", titleFont, XBrushes.Black,
                         new XRect(margin, 50, usableWidth, 30), XStringFormats.TopLeft);
 
                     var yPosition = 100;
                     var filterInfo = new List<string>();
-                    
+
                     if (filter.StartDate.HasValue)
                         filterInfo.Add($"Period: {filter.StartDate.Value:d} - {filter.EndDate?.ToString("d") ?? "present"}");
                     if (filter.AccountId.HasValue)
@@ -84,12 +84,12 @@ namespace WebApplication2.Services.BookEvent
                         filterInfo.Add($"Category: {filter.CategoryName}");
                     if (!string.IsNullOrEmpty(filter.BranchName))
                         filterInfo.Add($"Branch: {filter.BranchName}");
-                    
+
                     if (filterInfo.Any())
                     {
                         gfx.DrawString("Filters applied:", boldFont, XBrushes.Black, margin, yPosition);
                         yPosition += 20;
-                        
+
                         foreach (var info in filterInfo)
                         {
                             gfx.DrawString(info, font, XBrushes.Black, margin + 20, yPosition);
@@ -186,7 +186,7 @@ namespace WebApplication2.Services.BookEvent
             try
             {
                 filter ??= new BookEventFilterDTO();
-                
+
                 var conditions = new List<string>();
                 var parameters = new DynamicParameters();
 
@@ -290,4 +290,4 @@ namespace WebApplication2.Services.BookEvent
             }
         }
     }
-} 
+}

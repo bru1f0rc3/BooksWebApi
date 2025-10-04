@@ -24,7 +24,7 @@ namespace WebApplication2.Services.Branch
                 INSERT INTO ""Branches"" (name)
                 VALUES (@name)
                 RETURNING *";
-            
+
             return await DbConnect.QueryFirstOrDefaultAsync<BranchDTO>(sql, new { Name = branch.name });
         }
 
@@ -35,7 +35,7 @@ namespace WebApplication2.Services.Branch
                 SET name = @name
                 WHERE id = @id
                 RETURNING *";
-            
+
             return await DbConnect.QueryFirstOrDefaultAsync<BranchDTO>(sql, new { id = id, Name = branch.name });
         }
 
@@ -46,4 +46,4 @@ namespace WebApplication2.Services.Branch
             return rowsAffected > 0;
         }
     }
-} 
+}

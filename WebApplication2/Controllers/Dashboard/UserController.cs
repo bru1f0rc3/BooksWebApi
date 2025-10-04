@@ -32,7 +32,7 @@ namespace WebApplication2.Controllers.Dashboard
         [HttpPut("change-password")]
         public async Task<ActionResult> ChangePassword(ChangePasswordDTO changePassword)
         {
-            if (string.IsNullOrEmpty(changePassword.old_password) || 
+            if (string.IsNullOrEmpty(changePassword.old_password) ||
                 string.IsNullOrEmpty(changePassword.new_password))
             {
                 return BadRequest("Старый и новый пароли обязательны");
@@ -45,4 +45,4 @@ namespace WebApplication2.Controllers.Dashboard
             return Ok("Пароль успешно изменен");
         }
     }
-} 
+}

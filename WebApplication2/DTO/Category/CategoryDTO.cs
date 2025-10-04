@@ -15,4 +15,4 @@ namespace WebApplication2.DTO.Category
     {
         public string name { get; set; }
     }
-} 
+}

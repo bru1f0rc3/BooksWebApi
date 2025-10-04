@@ -11,4 +11,4 @@ namespace WebApplication2.DTO.BookEvent
         public DateTime event_date { get; set; }
         public string event_type_name { get; set; }
     }
-} 
+}

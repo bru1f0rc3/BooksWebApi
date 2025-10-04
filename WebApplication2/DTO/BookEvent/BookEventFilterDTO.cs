@@ -14,4 +14,4 @@ namespace WebApplication2.DTO.BookEvent
         public string? CategoryName { get; set; }
         public string? BranchName { get; set; }
     }
-} 
+}

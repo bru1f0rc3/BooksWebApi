@@ -63,4 +63,4 @@ namespace WebApplication2.Services.Auth
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
-} 
+}

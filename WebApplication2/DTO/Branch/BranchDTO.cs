@@ -15,4 +15,4 @@ namespace WebApplication2.DTO.Branch
     {
         public string name { get; set; }
     }
-} 
+}

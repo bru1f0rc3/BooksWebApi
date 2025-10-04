@@ -11,4 +11,4 @@ namespace WebApplication2.DTO.BookEvent
         public string UserName { get; set; } = string.Empty;
         public string EventTypeName { get; set; } = string.Empty;
     }
-} 
+}
