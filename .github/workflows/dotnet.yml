@@ -11,7 +11,6 @@
 #
 # For more information: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
 # =============================================================================
-
 name: .NET CI/CD
 
 # =============================================================================
@@ -37,7 +36,6 @@ env:
 # Jobs
 # =============================================================================
 jobs:
-
   # ===========================================================================
   # Code Quality Check
   # ===========================================================================
@@ -48,6 +46,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
     
     - name: Setup .NET SDK
       uses: actions/setup-dotnet@v4
@@ -57,8 +57,28 @@ jobs:
     - name: Restore .NET tools
       run: dotnet tool restore || dotnet tool install -g dotnet-format
     
-    - name: Check code formatting
-      run: dotnet format ${{ env.SOLUTION_PATH }} --verify-no-changes --verbosity diagnostic
+    - name: Apply code formatting
+      run: dotnet format ${{ env.SOLUTION_PATH }} --verbosity diagnostic
+    
+    - name: Check for formatting changes
+      id: verify-changed-files
+      run: |
+        if git diff --quiet; then
+          echo "No formatting changes needed"
+          echo "changed=false" >> $GITHUB_OUTPUT
+        else
+          echo "Formatting changes detected"
+          echo "changed=true" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Commit formatting changes
+      if: steps.verify-changed-files.outputs.changed == 'true'
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add -A
+        git commit -m "Auto-fix: Apply dotnet format whitespace corrections"
+        git push
 
   # ===========================================================================
   # Build and Test
