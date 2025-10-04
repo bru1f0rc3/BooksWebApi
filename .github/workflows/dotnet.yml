@@ -145,7 +145,7 @@ jobs:
     # -------------------------------------------------------------------------
     - name: Upload test results
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: test-results-${{ matrix.configuration }}
         path: '**/*.trx'
@@ -156,7 +156,7 @@ jobs:
     # -------------------------------------------------------------------------
     - name: Upload coverage reports
       if: matrix.configuration == 'Release'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: coverage-report
         path: '**/coverage.cobertura.xml'
@@ -206,7 +206,7 @@ jobs:
     # Upload Release Artifacts
     # -------------------------------------------------------------------------
     - name: Upload release artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ env.ARTIFACT_NAME }}
         path: ./publish
@@ -222,48 +222,48 @@ jobs:
         echo "Branch: ${{ github.ref_name }}" >> ./publish/deployment-info.txt
         echo "Configuration: ${{ env.BUILD_CONFIGURATION }}" >> ./publish/deployment-info.txt
 
-  # ===========================================================================
-  # Deployment Stage (Placeholder)
-  # ===========================================================================
-  # Uncomment and configure when ready to add deployment
-  #
-  # deploy-to-staging:
-  #   name: Deploy to Staging
-  #   runs-on: ubuntu-latest
-  #   needs: publish-artifacts
-  #   environment:
-  #     name: staging
-  #     url: https://staging.yourapp.com
-  #   
-  #   steps:
-  #   - name: Download artifacts
-  #     uses: actions/download-artifact@v3
-  #     with:
-  #       name: ${{ env.ARTIFACT_NAME }}
-  #   
-  #   - name: Deploy to staging environment
-  #     run: |
-  #       # Add your deployment script here
-  #       echo "Deploying to staging..."
-  #
-  # deploy-to-production:
-  #   name: Deploy to Production
-  #   runs-on: ubuntu-latest
-  #   needs: deploy-to-staging
-  #   environment:
-  #     name: production
-  #     url: https://yourapp.com
-  #   
-  #   steps:
-  #   - name: Download artifacts
-  #     uses: actions/download-artifact@v3
-  #     with:
-  #       name: ${{ env.ARTIFACT_NAME }}
-  #   
-  #   - name: Deploy to production environment
-  #     run: |
-  #       # Add your deployment script here
-  #       echo "Deploying to production..."
+# ===========================================================================
+# Deployment Stage (Placeholder)
+# ===========================================================================
+# Uncomment and configure when ready to add deployment
+#
+# deploy-to-staging:
+#   name: Deploy to Staging
+#   runs-on: ubuntu-latest
+#   needs: publish-artifacts
+#   environment:
+#     name: staging
+#     url: https://staging.yourapp.com
+# 
+#   steps:
+#   - name: Download artifacts
+#     uses: actions/download-artifact@v3
+#     with:
+#       name: ${{ env.ARTIFACT_NAME }}
+# 
+#   - name: Deploy to staging environment
+#     run: |
+#       # Add your deployment script here
+#       echo "Deploying to staging..."
+#
+# deploy-to-production:
+#   name: Deploy to Production
+#   runs-on: ubuntu-latest
+#   needs: deploy-to-staging
+#   environment:
+#     name: production
+#     url: https://yourapp.com
+# 
+#   steps:
+#   - name: Download artifacts
+#     uses: actions/download-artifact@v3
+#     with:
+#       name: ${{ env.ARTIFACT_NAME }}
+# 
+#   - name: Deploy to production environment
+#     run: |
+#       # Add your deployment script here
+#       echo "Deploying to production..."
 
 # =============================================================================
 # End of Workflow
