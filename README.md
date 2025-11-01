@@ -187,17 +187,40 @@ psql -U postgres -d library_db -f database.sql
 
 ### Шаг 3: Настройка конфигурации
 
+#### Настройка подключения к базе данных
+
+Отредактируйте файл `WebApplication2/Connection/DbConnect.cs`:
+
+```csharp
+public class DbConnect
+{
+    public NpgsqlConnection GetConnection()
+    {
+        var connectionString = "Host=localhost;Port=5432;Database=library_db;Username=postgres;Password=yourpassword";
+        return new NpgsqlConnection(connectionString);
+    }
+}
+```
+
+#### Настройка JWT и Email
+
 Отредактируйте `appsettings.json`:
 
 ```json
 {
-  "ConnectionStrings": {
-    "DefaultConnection": "Host=localhost;Port=5432;Database=library_db;Username=postgres;Password=yourpassword"
-  },
   "Jwt": {
     "Key": "your-super-secret-key-with-minimum-32-characters",
     "Issuer": "LibraryManagementSystem",
     "Audience": "LibraryManagementSystem"
+  },
+  "Email": {
+    "SmtpHost": "smtp.gmail.com",
+    "SmtpPort": "587",
+    "SmtpUser": "your-email@gmail.com",
+    "SmtpPassword": "your-app-password",
+    "FromEmail": "your-email@gmail.com",
+    "FromName": "BooksAPI",
+    "EnableSsl": "true"
   }
 }
 ```
